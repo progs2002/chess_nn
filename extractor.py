@@ -43,7 +43,7 @@ def encode_game(game):
     
     return bitboard_states, [res]*len(bitboard_states)
 
-def get_dataset(path, num_games=50):
+def get_dataset(path, num_games=50, device='cpu'):
     games = parse(path,num_games)
     X, Y = [], []
     for idx, game in enumerate(games):
@@ -51,6 +51,7 @@ def get_dataset(path, num_games=50):
         print(f'encoded game {idx+1}')
         X += x
         Y += y   
-    X = torch.tensor(X)
-    Y = torch.tensor(Y)
+    X = torch.tensor(X,dtype=torch.float,device=device)
+    Y = torch.tensor(Y,dtype=torch.float,device=device)
+    print('converting dataset into tensors, device = {device}')
     return X, Y

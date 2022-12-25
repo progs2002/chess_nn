@@ -44,17 +44,21 @@ def encode_game(game): #randomly extract 10 positions excluding the first 5 move
         if turn > 5 and not capture_move:
             bitboard_states.append(encode_board(board,turn_color))
     random.shuffle(bitboard_states)
-    return bitboard_states[:10], [res]*10
+    return bitboard_states[:10], res
 
 def get_dataset(path, num_games=50, device='cpu'):
     games = parse(path,num_games)
-    X, Y = [], []
+    white_wins, black_wins = [], []
     for idx, game in enumerate(games):
-        x, y = encode_game(game)
+        x, res = encode_game(game)
         print(f'encoded game {idx+1}')
-        X += x
-        Y += y   
-    X = torch.tensor(X,dtype=torch.float,device=device)
-    Y = torch.tensor(Y,dtype=torch.float,device=device)
+        if res:
+            white_wins += x
+        else:
+            black_wins += x
+    
+    white_wins = torch.tensor(white_wins,dtype=torch.float,device=device)
+    black_wins = torch.tensor(black_wins,dtype=torch.float,device=device)
+    
     print('converting dataset into tensors, device = {device}')
-    return X, Y
+    return white_wins, black_wins

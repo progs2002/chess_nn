@@ -1,6 +1,7 @@
 import chess
 import torch
 import chess.pgn
+import random 
 
 def parse(path, limit):
     pgn = open(path)
@@ -40,8 +41,8 @@ def encode_game(game):
         board.push(move)
         turn_color = (turn+1)%2
         bitboard_states.append(encode_board(board,turn_color))
-    
-    return bitboard_states, [res]*len(bitboard_states)
+    random.shuffle(bitboard_states)
+    return bitboard_states[:10], [res]*10
 
 def get_dataset(path, num_games=50, device='cpu'):
     games = parse(path,num_games)

@@ -17,9 +17,12 @@ Y = arr['arr_1']
 p = np.random.permutation(len(Y))
 X = X[p]
 Y = Y[p]
+Y_t = np.ones((Y.shape[0],2))
+Y_t[:,0] = Y
+Y_t[:,1] = np.where((Y==0)|(Y==1), Y^1, Y)
 
 X = torch.tensor(X,dtype=torch.float,device=device)
-Y = torch.tensor(Y,dtype=torch.float,device=device).view(-1,1)
+Y = torch.tensor(Y_t,dtype=torch.float,device=device)
 # Y = Y*2 - 1
 print(f'X - {X.shape} Y - {Y.shape}')
 
@@ -37,20 +40,20 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(600, 300)
         self.fc3 = nn.Linear(300, 100)
         self.fc4 = nn.Linear(100,50)
-        self.fc5 = nn.Linear(50,1)
+        self.fc5 = nn.Linear(50,2)
     def forward(self, x):
         x = torch.relu(self.fc1(x))
         x = torch.relu(self.fc2(x))
         x = torch.relu(self.fc3(x))
         x = torch.relu(self.fc4(x))
-        x = torch.sigmoid(self.fc5(x))
+        x = self.fc5(x)
         return x
 
 model = Net().to(device)
 
 epochs = 200
 
-criterion = nn.BCELoss()
+criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(),lr=0.1)
 
 print_interval = len(train_dataset)//(batch_size * 10)
@@ -77,22 +80,18 @@ f_positives = 0
 f_negatives = 0
 with torch.no_grad():
     for x, y in test_loader:
-        pred = model(x).item()
-        preds.append(pred)
-        ys.append(y.item())
-        pred = int(pred > 0.5)
-        if pred == int(y.item()):
-            count += 1
-        if y.item() == 1.0 and pred == 0:
-            f_negatives += 1
-        if y.item() == 0.0 and pred == 1:
-            f_positives += 1
+        pred = model(x)
+        count += torch.sum(torch.argmax(pred,1) == torch.argmax(y,1))
+        # if y[0,0] == 1.0 and (pred[0,0] ):
+        #     f_negatives += 1
+        # if y[0,0] == 0.0 and pred[0,0] == 1:
+        #     f_positives += 1
         t_count += 1
 
-print(preds[:30])
-print(ys[:30])
+# print(preds[:30])
+# print(ys[:30])
 print(f'accuracy = {count/t_count*100}%')
-print(f'fn {f_negatives} fp {f_positives}')
+# print(f'fn {f_negatives} fp {f_positives}')
 
 torch.save(model.state_dict(), 'model.pth')
 print('Model saved to disk')

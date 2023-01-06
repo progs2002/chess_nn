@@ -53,8 +53,9 @@ def encode_game(game):
         board.push(move)
         turn_color = (turn+1)%2
         bitboard_states.append(encode_board(board,turn_color))
-    random.shuffle(bitboard_states)
-    return bitboard_states[:15], [res]*15
+    # random.shuffle(bitboard_states)
+    # return bitboard_states[:15], [res]*15
+    return bitboard_states, [res]*len(bitboard_states)
 
 def prepare_dataset(name, num_games=50):
     path = 'dataset/games.pgn'
@@ -66,6 +67,6 @@ def prepare_dataset(name, num_games=50):
     print(X.shape, Y.shape)
 
 if __name__ == "__main__":
-    name = 'data20k.npz'
-    num_games = 20000
+    name = 'data20k_x.npz'
+    num_games = 39880
     prepare_dataset(name,num_games)

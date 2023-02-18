@@ -1,26 +1,20 @@
 a neural net evaluation function for playing chess 
 
-paper - arXiv:1711.09667  
-https://arxiv.org/pdf/1711.09667.pdf
+paper - https://www.researchgate.net/publication/322539902_Learning_to_Evaluate_Chess_Positions_with_Deep_Neural_Networks_and_Limited_Lookahead 
+
+The MLP architecture from this paper has been implemented
 
 architecture:-
 
-pos2vec (dbn) -> 733-100-100-100 (unsupervised pre-training for feature extraction)
-
-deep_chess network -> (2xdbn-100-100-2) all fc layers, supervised training
+773 -> 1048 -> 500 -> 50 -> 1
 
 inputs to the network are encoded bitboards flattened to a vector of len 773
-output is a softmax-ed prediction of a win-loss prediction probabilities 
+output is a single scalar probability of white winning the board.
 
+working:-
 
+The extractor module parses chess pgn files and encodes each random game position into a 773 sized vector. A dataset is prepared for positions won by black and white. The model is trained to fit the data for 25 epochs.
 
-========================TODO=================
+<img src='mse_nosig.png'>
 
-<br>
-learn about dbns,
-learn about min-max, alpha-beta pruning
-construct trainable tensor dataset of board states and resulting scores
-train dbn
-train deepchess
-build playable model with minmax and nn_eval
-implement svg server 
+ 

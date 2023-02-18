@@ -12,7 +12,7 @@ class Net(nn.Module):
     def __init__(self):
         super().__init__()
         self.do = nn.Dropout(p=0.2)
-        self.fc1 = nn.Linear(768, 1048)
+        self.fc1 = nn.Linear(773, 1048)
         self.fc2 = nn.Linear(1048, 500)
         self.fc3 = nn.Linear(500, 50)
         self.fc4 = nn.Linear(50,1)
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     device = 'cuda'
     batch_size = 64
 
-    arr = np.load('dataset/data20k_768.npz')
+    arr = np.load('dataset/data20k.npz')
     X = arr['arr_0']
     Y = arr['arr_1']
 
@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
     model = Net().to(device)
 
-    epochs = 50
+    epochs = 15
 
     criterion = nn.BCELoss()
     # optimizer = optim.SGD(model.parameters(),lr=0.1)

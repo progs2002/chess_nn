@@ -1,6 +1,6 @@
 #!/bin/python
 import torch
-from train1 import Net
+from train import Net
 import chess
 from extractor import encode_board
 import numpy as np
